@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/papercss@1.6.1/dist/paper.min.css"
+    />
+    <style>
+      #results {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: flex-start;
+      }
+
+      body {
+        background-color: #dfdbe5;
+        background-image: url("data:image/svg+xml,%3Csvg width='6' height='6' viewBox='0 0 6 6' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%239C92AC' fill-opacity='0.4' fill-rule='evenodd'%3E%3Cpath d='M5 0h1L0 6V5zM6 5v1H5z'/%3E%3C/g%3E%3C/svg%3E");
+        padding: 17px;
+      }
+
+      .selected {
+        background-color: yellowgreen;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="paper container">
+      <div class="row">
+        <div class="col sm-4">
+          <div class="form-group">
+            <label for="paperInputs2">Search Emojis</label>
+            <input class="input-block" type="text" id="paperInputs2" />
+          </div>
+        </div>
+        <div class="col sm-4">
+          <button class="btn-large">Show selected</button>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col sm-12" id="results"></div>
+      </div>
+    </div>
+    <script>
+      // once you fetch all the JSON data, store it all in here
+      let emojis = [];
+
+      // when you search for an emoji, store the filtered results here
+      let emojiResults = [];
+
+      // when you click on emoji(s) to select it, store them in here
+      let hand = [];
+
+      // this is the container where all the emojis will display
+      const results = document.querySelector("#results");
+
+      // input textbox from which we can get whatever was typed via input.value
+      const input = document.querySelector("input");
+
+      // "Show Selected" button
+      const showBtn = document.querySelector("button");
+      showBtn.addEventListener("click", filterEmojis);
+
+      // Listen for any keypress then run our search function
+      window.addEventListener("keydown", searchEmojis);
+
+      // fetch our data
+      init();
+
+      // PLACE YOUR CODE BELOW THIS LINE
+      function init() {
+        fetch("https://unpkg.com/emoji.json@12.1.0/emoji.json")
+          .then(data => data.json())
+          .then(data => (emojis = data));
+      }
+
+      function searchEmojis() {
+        emojiResults = emojis.filter(
+          emoji =>
+            emoji.name.includes(input.value) ||
+            emoji.category.includes(input.value)
+        );
+
+        render();
+      }
+
+      function render(emojis = emojiResults) {
+        results.innerHTML = emojis
+          .map(
+            (emoji, index) => `
+          <div class="card ${
+            emoji.selected ? "selected" : ""
+          }" data-idx="${index}" style="width:20rem;">
+            <div class="card-body">
+              <h4 class="card-title">${emoji.char}</h4>
+            </div>
+          </div>
+        `
+          )
+          .join("");
+
+        const cards = [...document.querySelectorAll(".card")];
+        cards.map(card => card.addEventListener("click", selectCard));
+      }
+
+      function selectCard() {
+        console.log(this);
+        const index = this.dataset.idx;
+        emojiResults[index].selected = true;
+        render();
+      }
+
+      function filterEmojis() {
+        hand = [...hand, ...emojiResults];
+        render(hand.filter(emoji => emoji.selected));
+      }
+    </script>
+  </body>
+</html>
