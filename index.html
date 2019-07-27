@@ -88,7 +88,7 @@
       }
 
       function render(emojis = emojiResults) {
-        results.innerHTML = emojis
+        results.innerHTML = emojis      // burdaki mapping hangisine tiklandiysa onu secmemizi sagliyor giriste index parametresi vermemiz gerekiyor
           .map(
             (emoji, index) => `
           <div class="card ${
