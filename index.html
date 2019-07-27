@@ -108,7 +108,7 @@
 
       function selectCard() {
         console.log(this);
-        const index = this.dataset.idx;
+        const index = this.dataset.idx; // burdaki dataset aslinda secilen valuenun kendisini temsil ediyor kilit nokta onemli !!
         emojiResults[index].selected = true;
         render();
       }
